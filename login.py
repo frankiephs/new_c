@@ -10,9 +10,6 @@ root.columnconfigure(0, weight=1)  # Lower weight for column 0 in the first row
 root.columnconfigure(1, weight=2)  # Higher weight for column 1 in the first row
 
 
-
-
-
 # first col, first row
 frame1 = tk.Frame(root,highlightbackground="black",highlightthickness=1)
 frame1.grid(column=0, row=0, ipadx=10, ipady=10,sticky="NSEW")
@@ -36,6 +33,7 @@ rectangle_3.grid(column=1, row=1, ipadx=10, ipady=10)
 
 # fills entire row 5
 frame4 = tk.Frame(root,highlightbackground="black",highlightthickness=1)
+
 frame4.grid(column=0, row=5, ipadx=10, ipady=10,sticky="NSEW", columnspan=2) # coloumn span. fills the space for 2 cells.
 rectangle_4 = tk.Label(frame4, text="Rectangle 4", bg="orange", fg="black")
 rectangle_4.pack(fill="both", expand=True) # pack fill + expand=True. Fills the entire frame

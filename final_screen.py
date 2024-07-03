@@ -6,11 +6,19 @@ from tkinter import messagebox
 import scoring
 import csv_export
 import datetime
+
+
+
 class gui_c:
     def __init__(self, master):
         self.root = master
         self.root.geometry("600x400")
         self.root.wm_state('zoomed')
+
+        # expand the root
+        self.root.rowconfigure(0, weight=1)
+        self.root.columnconfigure(0, weight=1)
+
         self.points_refference = {
         "1":8,
         "2":7,
@@ -22,6 +30,12 @@ class gui_c:
         "8":1,
         ">":1,
         }
+
+        FONT_FAMILY = "Helvetica"
+        self.title_font = (FONT_FAMILY, 20, "bold") 
+        self.heading_font = (FONT_FAMILY, 15) 
+        self.default_font = (FONT_FAMILY, 10) 
+
         self.loading_delay = 1
         self.logs_path = "logs"
         
@@ -30,7 +44,7 @@ class gui_c:
         self.error_list = []
         self.current_frame = None
         self.filter_case_sensitive = False
-
+        
         # settings
         self.filter_keyword = None
 
@@ -40,29 +54,58 @@ class gui_c:
 
 
     def HomeScreen(self):
-        
-        self.save_to_logfile("HomeScreen")
+        # initialize the screen
         self.current_frame = tk.Frame(self.root)
+        self.save_to_logfile("HomeScreen") # save to log file
 
-        help_button = tk.Button(self.current_frame,text="Help", command=lambda:self.show_screen(self.HelpScreen))
-        help_button.pack()
+        # initialize the grid 3 rows
+        self.current_frame.rowconfigure(1,weight=1) # center is much bigger
+        self.current_frame.columnconfigure(0, weight=1)  # make sure column stretches
+        
+
+        # creating nav bar frame
+        nav_bar = tk.Frame(self.current_frame,highlightbackground="black",highlightthickness=1,bg="cyan") 
+        nav_bar.grid(column=0, row=0, ipadx=10, ipady=10,sticky="NSEW") # coloumn span. fills the space for 3 cells.
+
+        # initialize nav bar to two columns
+        nav_bar.columnconfigure(0,weight=1)
+        nav_bar.columnconfigure(1, weight=1)
+
+        # nav bar help button
+        help_button = tk.Button(nav_bar,text="Help", command=lambda:self.show_screen(self.HelpScreen),font=self.default_font)
+        help_button.grid(column=1, sticky="NE",padx=10,pady=10)
 
         
+        # creating the body frame
+        body_frame = tk.Frame(self.current_frame,highlightbackground="black",highlightthickness=1,bg="cyan")
+        body_frame.grid(column=0, row=1, ipadx=10, ipady=10,sticky="NSEW") # coloumn span. fills the space for 3 cells.
         
+        # initialize the body frame to have a center row
+        body_frame.rowconfigure(0, weight=1)
+        body_frame.columnconfigure(0, weight=1)
 
-        title_label = tk.Label(self.current_frame,text="WAKA AMA PROGRAM")
-        title_label.pack()
+        # Create a group for the components
+        body_inner_frame = tk.Frame(body_frame, bg="cyan")
+        body_inner_frame.grid(column=0, row=0, sticky="")
 
-        paragraph_label = tk.Label(self.current_frame,text="Make sure it is a valid parent folder. Parent Folder should not contain non-folder items inside.")
-        paragraph_label.pack()
+        # Title
+        title_label = tk.Label(body_inner_frame,text="WAKA AMA",font=self.title_font)
+        title_label.grid()
 
+        # subtitle
+        subtitle_label = tk.Label(body_inner_frame,text="Regional Association Scoring Program",font=self.heading_font)
+        subtitle_label.grid()
 
-        OpenFolder = tk.Button(self.current_frame, text="Open Folder", command=self.get_folder_path)
-        OpenFolder.pack()
+        # Paragraph
+        paragraph_label = tk.Label(body_inner_frame,text="Make sure it is a valid parent folder. Parent Folder should not contain non-folder items inside.",font=self.default_font)
+        paragraph_label.grid()
 
-        # Pack the frame to display
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        # Open Folder Button
+        OpenFolder = tk.Button(body_inner_frame, text="Open Folder", command=self.get_folder_path,font=self.default_font)
+        OpenFolder.grid(padx=10,pady=10)
 
+        # Finalize the Screen
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
 
 
     def get_folder_path(self):
@@ -76,11 +119,26 @@ class gui_c:
             messagebox.showwarning("Error while Processing", "Invalid File Folder\n -For more details, go to Help.\n -To check all errors, go to logs after this process")
             
     def SelectYearsScreen(self, parent_path):
+
+        # initialize the screen
         self.save_to_logfile("Select Years screen")
         self.current_frame = tk.Frame(self.root)
 
-        Back_Button = tk.Button (self.current_frame, text = "Back",command=lambda: self.show_screen(self.HomeScreen))
-        Back_Button.pack()
+        # initialize the grid 3 rows
+        self.current_frame.rowconfigure(1,weight=1) # center is much bigger
+        self.current_frame.columnconfigure(0, weight=1)  # make sure column stretches
+
+        # creating nav bar frame
+        nav_bar = tk.Frame(self.current_frame,highlightbackground="black",highlightthickness=1,bg="cyan") 
+        nav_bar.grid(column=0, row=0, ipadx=10, ipady=10,sticky="NSEW") # coloumn span. fills the space for 3 cells.
+
+        # initialize nav bar to two columns
+        nav_bar.columnconfigure(0,weight=1)
+        nav_bar.columnconfigure(1, weight=1)
+
+        # adding nav bar back button
+        Back_Button = tk.Button (nav_bar, text = "Back",command=lambda: self.show_screen(self.HomeScreen))
+        Back_Button.grid()
 
         try:
             years_and_files = fr.file_read_c.return_years(parent_path)
@@ -92,30 +150,30 @@ class gui_c:
             
 
         headers_label = tk.Label(self.current_frame,text="Year | FIles")
-        headers_label.pack()
+        headers_label.grid()
         
         
         for i in years_and_files:
             year_label = tk.Label(self.current_frame,text=f"{i} : {years_and_files[i]}",relief="sunken")
-            year_label.pack()
+            year_label.grid()
         
                 
         select_year_label = tk.Label(self.current_frame,text="Type the available years above")
-        select_year_label.pack()
+        select_year_label.grid()
         input_label = tk.Entry(self.current_frame)
-        input_label.pack()
+        input_label.grid()
         
 
 
         filter_label = tk.Label(self.current_frame,text="Type your filter keyword. Leave Blank if none")
-        filter_label.pack()
+        filter_label.grid()
         filter_input = tk.Entry(self.current_frame)
-        filter_input.pack()
+        filter_input.grid()
 
         select_year_button = tk.Button(self.current_frame,text="Select year",command= lambda : self.select_year(input_label,years_and_files, filter_input))
-        select_year_button.pack()
+        select_year_button.grid()
 
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
 
         self.parent_path = parent_path
 
@@ -126,7 +184,7 @@ class gui_c:
         filter_keyword = filter_input.get()
 
         if filter_keyword:
-            messagebox.showinfo("Info", f"filter keyword:{filter_keyword}")
+            messagebox.showinfo("Info", f"Keyword: {filter_keyword}")
             self.filter_keyword = filter_keyword
         
 
@@ -177,7 +235,6 @@ class gui_c:
             self.root.after(self.loading_delay, self.process_filtered_files)
 
     def filter_files(self):
-        self.save_to_logfile("Filter Files")
         if self.current_file_index < len(self.files_list): # if file index lower than the count of files
             filename = self.files_list[self.current_file_index] # get every single filenames from the files list
             self.update_loading_label(f"Getting files from year {self.selected_year}, Checking {filename}...") # change statement
@@ -219,6 +276,7 @@ class gui_c:
             file_contents = fr.file_read_c.return_content(filepath)
             formatted_file_contents = fr.file_read_c.format_content(file_contents, filename)     
             if formatted_file_contents == "ERROR":
+                self.save_to_logfile(f"ERROR: {formatted_file_contents} | {filename}")
                 error = f"There is an error on your file: | {filename}"
                 if self.ShowError:
                     messagebox.showwarning("Error while Processing", f"{error}\n\n -For more details, go to Help.\n -To check all errors, go to logs after this process")
@@ -332,11 +390,6 @@ class gui_c:
 
         Text.configure(state=tk.DISABLED) # after insert
             
-
-
-    
-        
-        
     
     def HelpScreen(self):
         self.save_to_logfile("Help Screen")
@@ -352,6 +405,14 @@ class gui_c:
         self.current_frame = self.current_frame
 
         self.current_frame.pack(fill=tk.BOTH, expand=True)
+
+
+
+
+
+
+
+
 
     def pick_save(self,year_regional_association_score):
         self.save_to_logfile("Pick Save")
@@ -387,10 +448,8 @@ class gui_c:
         self.current_frame.pack(fill=tk.BOTH, expand=True)
 
     
-
-
     def show_screen(self, Screen_function,data=None):
-        self.save_to_logfile(f" Changed screen ")
+        self.save_to_logfile(f"Changed screen ")
         if self.current_frame:
             self.current_frame.pack_forget()  # Hide current frame
             self.current_frame = None
@@ -411,9 +470,8 @@ class gui_c:
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                 if file.tell() != 0:
-                    file.write('\n')
                     file.write(f"\n{current_time}")
-                file.write(f"{data} \n")
+                file.write(f"\n{data} ")
             print(f"Log updated | {file_path}")
         except Exception as e:
             print(f"An error occurred: {e}")
