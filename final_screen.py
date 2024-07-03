@@ -205,7 +205,9 @@ class gui_c:
     def LoadingScreen(self, year_input):
         self.save_to_logfile("Loading Screen")
         self.current_frame = tk.Frame(self.root)
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+
+        # finalize
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
 
         self.Loading_label = tk.Label(self.current_frame, text=f"{year_input} | Starting the program...")
         
@@ -354,12 +356,16 @@ class gui_c:
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        
 
         OpenLogs = tk.Button(self.current_frame,text="Open Logs", command= self.LogsScreen)
         OpenLogs.pack()
         SaveCSV = tk.Button(self.current_frame,text="Save to CSV", command=lambda:self.show_screen(self.pick_save,year_regional_association_scores))
         SaveCSV.pack()
+
+        # finalize
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
+
 
     
     def LogsScreen(self):
@@ -401,10 +407,13 @@ class gui_c:
 
 
         tk.Label(self.current_frame, text="Help Screen").pack()
-        self.current_frame.pack(fill=tk.BOTH, expand=True)  # Show new frame
-        self.current_frame = self.current_frame
+        
+        # finalize
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
 
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        self.current_frame = self.current_frame
+        # finalize
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
 
 
 
@@ -445,13 +454,15 @@ class gui_c:
 
         OpenLogs = tk.Button(self.current_frame,text="Open Logs", command= self.LogsScreen)
         OpenLogs.pack()
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+
+        # finalize
+        self.current_frame.grid(row=0, column=0, sticky="NSEW")
 
     
     def show_screen(self, Screen_function,data=None):
         self.save_to_logfile(f"Changed screen ")
         if self.current_frame:
-            self.current_frame.pack_forget()  # Hide current frame
+            self.current_frame.grid_forget()  # Hide current frame
             self.current_frame = None
 
         if data:
