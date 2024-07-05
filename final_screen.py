@@ -8,6 +8,10 @@ import scoring # for scoring
 import csv_export # for exporting
 import datetime # for log dates
 from tkhtmlview import HTMLLabel # external library
+import help_screen 
+
+
+
 
 class gui_c:
     def __init__(self, master):
@@ -562,18 +566,9 @@ class gui_c:
         Title = CT.CTkLabel(self.current_frame, text="Help Screen")
         Title.grid()
 
-        html_help_content = """
-        <h1> Official Waka Ama Regional Association Scorer Program </h1>
-        <h2>What is this about?</h2>
-        Lorem Epsum
-        <h2>How to use?</h2>
-        Lorem Epsum
-        <h2> I have an error </h2>
-        Lorem epsum
-        """
+        
 
-
-        my_label = HTMLLabel(root, html=html_help_content).grid()
+        help_screen.get_help_contents(self)
 
         
 
@@ -599,7 +594,7 @@ class gui_c:
             if answer:
                 csv_export.csv_c.csv_export(year_regional_association_score,folder_path)
                 
-                self.show_screen(self.SaveScreen,folder_path)
+                self.show_screen(self.SaveScreen,(year_regional_association_score,folder_path))
         else:
             messagebox.showwarning("Error while Processing", "Invalid File Folder\n -For more details, go to Help.\n -To check all errors, go to logs after this process")
             self.show_screen(self.ResultsScreen,year_regional_association_score)    
@@ -607,8 +602,12 @@ class gui_c:
         
 
 
-    def SaveScreen(self,folder_path):
+    def SaveScreen(self,folder_n_scores):
+        
+        year_regional_association_score = folder_n_scores[0]
+        folder_path = folder_n_scores[1]
 
+        
 
         self.save_to_logfile(f"{self.filter_keyword} {self.selected_year} results saved to CSV in {folder_path}")
 
@@ -628,9 +627,9 @@ class gui_c:
         nav_bar.columnconfigure(0,weight=1)
         nav_bar.columnconfigure(1, weight=1)
 
-        # Creating Home Button
-        Home_Button = CT.CTkButton (nav_bar, text = "Home",font=self.default_font,command=lambda: self.show_screen(self.HomeScreen))
-        Home_Button.grid(row=0,column=0, sticky="NW",padx=10,pady=10)
+        # Creating Back Button
+        Back_Button = CT.CTkButton (nav_bar, text = "Back",font=self.default_font,command=lambda: self.show_screen(self.ResultsScreen,year_regional_association_score))
+        Back_Button.grid(row=0,column=0, sticky="NW",padx=10,pady=10)
 
 
         # creating the body frame
